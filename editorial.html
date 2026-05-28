@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ẢNH COUPLE — NAM</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Montserrat:wght=200;300;400;500&display=swap" rel="stylesheet">
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Montserrat', -apple-system, sans-serif;
+            background: linear-gradient(180deg, #222222 0%, #050505 60%, #000000 100%);
+            background-attachment: fixed;
+            color: #ffffff;
+            padding: 20px 20px 0 20px;
+            overflow-x: hidden;
+        }
+
+        .gallery-header {
+            position: sticky; top: 0; z-index: 100; text-align: center;
+            padding: 25px 20px 35px 20px; margin-bottom: 50px;
+            background: rgba(5, 5, 5, 0.35); 
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .brand-container { display: flex; align-items: center; justify-content: center; max-width: 600px; margin: 0 auto 5px auto; }
+        .line { flex: 1; height: 1px; background: rgba(255, 255, 255, 0.15); margin: 0 20px; }
+        .photographer-name {
+            font-family: 'Alex Brush', cursive; font-size: 5rem; font-weight: 400; white-space: nowrap;
+            color: transparent; -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.85);
+        }
+        .album-title { 
+            font-size: 0.75rem; letter-spacing: 0.6em; color: #888888; 
+            text-transform: uppercase; display: block; margin-bottom: 25px; 
+        }
+
+        .back-home-btn {
+            color: #cccccc; text-decoration: none; font-size: 0.7rem; text-transform: uppercase;
+            letter-spacing: 0.2em; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px;
+            transition: color 0.3s, border-color 0.3s;
+        }
+        .back-home-btn:hover { color: #ffffff; border-color: #ffffff; }
+
+        /* SỬA LẠI LƯỚI ĐỂ PHÙ HỢP CẢ ẢNH NGANG LẪN ẢNH ĐỨNG */
+        .photo-gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto 100px auto;
+            align-items: center;
+        }
+
+        .gallery-photo-item {
+            position: relative;
+            aspect-ratio: auto; 
+            overflow: hidden;
+            background-color: #0c0c0c;
+            cursor: pointer;
+        }
+
+        .gallery-photo-item img {
+            width: 100%; height: auto; display: block;
+            opacity: 0.85;
+            transition: opacity 0.5s ease, transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .gallery-photo-item:hover img {
+            opacity: 1;
+            transform: scale(1.03);
+        }
+
+        /* LIGHTBOX OVERLAY */
+        .lightbox-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.92); 
+            z-index: 999;
+            display: flex; justify-content: center; align-items: center;
+            opacity: 0; pointer-events: none; 
+            transition: opacity 0.4s ease;
+        }
+
+        .lightbox-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .lightbox-overlay img {
+            max-width: 90%;
+            max-height: 85vh; 
+            object-fit: contain;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+            transform: scale(0.9);
+            transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .lightbox-overlay.active img {
+            transform: scale(1); 
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: 30px; right: 40px;
+            font-size: 2.5rem; color: #ffffff;
+            cursor: pointer; opacity: 0.6;
+            transition: opacity 0.3s;
+            user-select: none;
+        }
+        .lightbox-close:hover { opacity: 1; }
+
+        /* FOOTER */
+        .contact-footer {
+            max-width: 1400px; margin: 0 auto; padding: 80px 40px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex; justify-content: space-between; align-items: flex-start;
+        }
+        .contact-left { max-width: 450px; }
+        .contact-left h2 { font-size: 1.8rem; font-weight: 300; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 20px; }
+        .contact-left p { font-size: 0.9rem; font-weight: 300; line-height: 1.8; color: #aaaaaa; }
+        .contact-right { display: flex; gap: 100px; }
+        .contact-info-block h3, .contact-social-block h3 { font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.2em; color: #888888; margin-bottom: 20px; }
+        .contact-info-block p, .contact-social-block ul { font-size: 0.9rem; font-weight: 300; list-style: none; line-height: 2; }
+        .contact-info-block a, .contact-social-block a { color: #cccccc; text-decoration: none; transition: color 0.3s ease; }
+        .contact-info-block a:hover, .contact-social-block a:hover { color: #ffffff; }
+
+        @media (max-width: 768px) {
+            .photo-gallery-grid { grid-template-columns: 1fr; gap: 15px; }
+            .contact-footer { flex-direction: column; gap: 40px; }
+            .contact-right { flex-direction: column; gap: 40px; }
+            .lightbox-close { top: 20px; right: 20px; font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="gallery-header">
+        <div class="brand-container">
+            <div class="line"></div>
+            <h1 class="photographer-name">Nam</h1>
+            <div class="line"></div>
+        </div>
+        <span class="album-title">ẢNH COUPLE Collection</span>
+        <nav>
+            <a href="index.html" class="back-home-btn">&#10229; Back to Collections</a>
+        </nav>
+    </header>
+
+    <div class="photo-gallery-grid" id="gallery-grid"></div>
+
+    <div class="lightbox-overlay" id="lightbox">
+        <span class="lightbox-close" id="lightbox-close">&times;</span>
+        <img src="" alt="Phóng to" id="lightbox-img">
+    </div>
+
+    <footer class="contact-footer">
+        <div class="contact-left">
+            <h2>Let's Create Together</h2>
+            <p>Hiện tại mình đang nhận các dự án hình ảnh thương mại, chụp lookbook thời trang và ảnh kỷ yếu nghệ thuật trên toàn quốc.</p>
+        </div>
+        <div class="contact-right">
+            <div class="contact-info-block">
+                <h3>Contact</h3>
+                <p><a href="mailto:namktnam2009@gmail.com">namktnam2009@gmail.com</a></p>
+                <p><a href="tel:0342138647">0342138647</a></p>
+            </div>
+            <div class="contact-social-block">
+                <h3>Connect</h3>
+                <ul>
+                    <li><a href="#">Instagram</a></li>
+                    <li><a href="#">Facebook</a></li>
+                </ul>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const TONG_SO_ANH = 25; // Thay tổng số ảnh couple của bạn vào đây
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const gridContainer = document.getElementById("gallery-grid");
+            const lightbox = document.getElementById("lightbox");
+            const lightboxImg = document.getElementById("lightbox-img");
+            const lightboxClose = document.getElementById("lightbox-close");
+            
+            for (let i = 1; i <= TONG_SO_ANH; i++) {
+                const itemDiv = document.createElement("div");
+                itemDiv.className = "gallery-photo-item";
+                
+                const imgElement = document.createElement("img");
+                imgElement.src = `anhcouple/${i}.jpg`;
+                imgElement.alt = `Ảnh couple số ${i}`;
+                imgElement.loading = "lazy";
+                
+                imgElement.onerror = function() {
+                    this.src = `anhcouple/${i}.jpeg`;
+                };
+
+                itemDiv.addEventListener("click", () => {
+                    lightboxImg.src = imgElement.src;
+                    lightbox.classList.add("active");
+                });
+                
+                itemDiv.appendChild(imgElement);
+                gridContainer.appendChild(itemDiv);
+            }
+
+            lightboxClose.addEventListener("click", () => { lightbox.classList.remove("active"); });
+            lightbox.addEventListener("click", (e) => {
+                if (e.target !== lightboxImg && e.target !== lightboxClose) { lightbox.classList.remove("active"); }
+            });
+        });
+    </script>
+</body>
+</html>

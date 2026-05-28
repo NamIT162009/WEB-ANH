@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NAM — Photographer Portfolio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Montserrat:wght=200;300;400;500&display=swap" rel="stylesheet">
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Montserrat', -apple-system, sans-serif;
+            /* NỀN PHAI MƯỢT MÀ TỪ XÁM (TỐI) SANG ĐEN TỪ TRÊN XUỐNG DƯỚI */
+            background: linear-gradient(180deg, #222222 0%, #050505 60%, #000000 100%);
+            background-attachment: fixed; /* Giữ nền cố định khi cuộn trang để hiệu ứng phai luôn đẹp */
+            color: #ffffff;
+            padding: 20px 20px 0 20px;
+            overflow-x: hidden;
+        }
+
+        /* HEADER KÍNH LỎNG & TÊN TRONG SUỐT */
+        .gallery-header {
+            position: sticky; top: 0; z-index: 100; text-align: center;
+            padding: 25px 20px 35px 20px; margin-bottom: 50px;
+            background: rgba(5, 5, 5, 0.35); /* Giảm bớt độ mờ để lộ nền xám phía sau */
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .brand-container { display: flex; align-items: center; justify-content: center; max-width: 600px; margin: 0 auto 5px auto; }
+        .line { flex: 1; height: 1px; background: rgba(255, 255, 255, 0.15); margin: 0 20px; }
+        .photographer-name {
+            font-family: 'Alex Brush', cursive; font-size: 5rem; font-weight: 400; white-space: nowrap;
+            color: transparent; -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.85);
+            filter: drop-shadow(0px 4px 8px rgba(0, 0, 0, 0.5));
+        }
+        .photographer-title { font-size: 0.7rem; letter-spacing: 0.7em; color: #888888; text-transform: uppercase; display: block; margin-bottom: 25px; }
+
+        /* LƯỚI BAO PHỦ CÁC CHỦ ĐỀ ALBUM */
+        .album-covers-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto 100px auto;
+        }
+
+        .album-cover-item {
+            position: relative;
+            aspect-ratio: 3 / 4; 
+            overflow: hidden;
+            background-color: #0c0c0c;
+            cursor: pointer;
+            text-decoration: none; 
+        }
+
+        .album-cover-item img {
+            width: 100%; height: 100%; object-fit: cover; display: block;
+            opacity: 0.65; /* Tăng độ sáng ảnh lên một chút để hòa hợp với nền xám */
+            transition: opacity 0.8s ease, transform 1.2s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        /* Phần chữ tên chủ đề đè cố định lên ảnh */
+        .album-info-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            z-index: 2;
+            transition: background 0.5s ease;
+        }
+
+        .album-info-overlay h2 {
+            font-size: 1.5rem; font-weight: 300; text-transform: uppercase;
+            letter-spacing: 0.3em; color: #ffffff; margin-bottom: 8px;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.6);
+            transition: transform 0.5s ease;
+        }
+
+        .album-info-overlay span {
+            font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase;
+            color: #cccccc;
+        }
+
+        /* HIỆU ỨNG HOVER KHI RÊ CHUỘT VÀO ALBUM */
+        .album-cover-item:hover img {
+            opacity: 0.85;
+            transform: scale(1.04);
+        }
+        .album-cover-item:hover .album-info-overlay {
+            background: rgba(0, 0, 0, 0.2); 
+        }
+        .album-cover-item:hover .album-info-overlay h2 {
+            transform: translateY(-5px);
+        }
+
+        /* FOOTER */
+        .contact-footer {
+            max-width: 1400px; margin: 0 auto; padding: 80px 40px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex; justify-content: space-between; align-items: flex-start;
+        }
+        .contact-left { max-width: 450px; }
+        .contact-left h2 { font-size: 1.8rem; font-weight: 300; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 20px; }
+        .contact-left p { font-size: 0.9rem; font-weight: 300; line-height: 1.8; color: #aaaaaa; }
+        .contact-right { display: flex; gap: 100px; }
+        .contact-info-block h3, .contact-social-block h3 { font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.2em; color: #888888; margin-bottom: 20px; }
+        .contact-info-block p, .contact-social-block ul { font-size: 0.9rem; font-weight: 300; list-style: none; line-height: 2; }
+        .contact-info-block a, .contact-social-block a { color: #cccccc; text-decoration: none; transition: color 0.3s ease; }
+        .contact-info-block a:hover, .contact-social-block a:hover { color: #ffffff; }
+
+        @media (max-width: 768px) {
+            .album-covers-container { grid-template-columns: 1fr; gap: 15px; }
+            .contact-footer { flex-direction: column; gap: 40px; }
+            .contact-right { flex-direction: column; gap: 40px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="gallery-header">
+        <div class="brand-container">
+            <div class="line"></div>
+            <h1 class="photographer-name">Nam</h1>
+            <div class="line"></div>
+        </div>
+        <span class="photographer-title">Photography Collections</span>
+    </header>
+
+    <div class="album-covers-container">
+        
+        <!-- Chủ đề 1: Ảnh Kỷ Yếu -->
+        <a href="landscape.html" class="album-cover-item">
+            <img src="z7856606742943_9113fc58ce72952bbcd00973f030fd29.jpg" alt="Ảnh Kỷ Yếu">
+            <div class="album-info-overlay">
+                <h2>Ảnh Kỷ Yếu</h2>
+                <span>View Collection</span>
+            </div>
+        </a>
+
+        <!-- Chủ đề 2: Editorial -->
+        <a href="editorial.html" class="album-cover-item">
+            <img src="DSC_0488.jpg" alt="ẢNH COUPLE">
+            <div class="album-info-overlay">
+                <h2>ẢNH COUPLE</h2>
+                <span>View Collection</span>
+            </div>
+        </a>
+
+        <!-- Chủ đề 3: Fine Art -->
+        <a href="fineart.html" class="album-cover-item">
+            <img src="8.jpg" alt="ẢNH PHONG CẢNH">
+            <div class="album-info-overlay">
+                <h2>ẢNH PHONG CẢNH</h2>
+                <span>View Collection</span>
+            </div>
+        </a>
+
+    </div>
+
+    <footer class="contact-footer">
+        <div class="contact-left">
+            <h2>Let's Create Together</h2>
+            <p>Hiện tại mình đang nhận các dự án hình ảnh thương mại, chụp lookbook thời trang và ảnh kỷ yếu nghệ thuật trên toàn quốc.</p>
+        </div>
+        <div class="contact-right">
+            <div class="contact-info-block">
+                <h3>Contact</h3>
+                <p><a href="mailto:namktnam2009@gmail.com">namktnam2009@gmail.com</a></p>
+                <p><a href="tel:0342138647">0342138647</a></p>
+            </div>
+            <div class="contact-social-block">
+                <h3>Connect</h3>
+                <ul>
+                    <li><a href="#">Instagram</a></li>
+                    <!-- ĐÃ THÊM LINK FACEBOOK TẠI ĐÂY -->
+                    <li><a href="https://www.facebook.com/xuan.nam.vo.27904" target="_blank">Facebook</a></li>
+                </ul>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>
